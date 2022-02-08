@@ -119,9 +119,7 @@ function App() {
   const importJSON = (e) => {
     let fileReader = new FileReader()
     fileReader.readAsText(e.target.files[0], 'UTF-8')
-    fileReader.onload = (e) => {
-      setFormElement(JSON.parse(e.target.result))
-    }
+    fileReader.onload = (e) => { setFormElement(JSON.parse(e.target.result)) }
   }
 
   const classes = useStyles();
@@ -152,9 +150,9 @@ function App() {
             autoFocus
             variant="standard"
             placeholder='Enter Title'
-            InputProps={{ disableUnderline: true }}
+            InputProps={{ disableUnderline: true, style: { fontSize: 24 } }}
             ref={textRef}
-            style={{ marginBottom: 20, fontSize: 20 }}
+            style={{ marginBottom: 20, }}
             value={formElement.formtitle}
             onChange={(e) => handleElementInsertion(e)}
             onKeyUp={(e) => handleElementInsertion(e)}
