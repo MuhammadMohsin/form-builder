@@ -50,7 +50,6 @@ export const CommandLine = ({ addCommandElement, index }) => {
 };
 
 export const Headline = ({ formElement, handleInputValue, index, handleElementInsertion }) => {
-    const classes = useStyles();
 
     /**
      * remove editable field on enter to display h1
