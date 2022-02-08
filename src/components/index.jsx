@@ -44,7 +44,6 @@ export const Headline = ({ formElement, handleInputValue, index, handleElement }
     const classes = useStyles();
 
     const handleTextCommand = (e) => {
-        console.log(e.keyCode,'============')
         if (e.keyCode === 13) {
             delete formElement.isEditable
             handleElement(e, 'input')
@@ -52,7 +51,7 @@ export const Headline = ({ formElement, handleInputValue, index, handleElement }
     }
 
     const makeEditable = () => {
-        handleInputValue(formElement,index,false)
+        handleInputValue(formElement, index, false)
     }
 
     return formElement.isEditable ?
@@ -64,14 +63,14 @@ export const Headline = ({ formElement, handleInputValue, index, handleElement }
             onKeyUp={(e) => handleTextCommand(e)}
             InputProps={{ disableUnderline: true }}
             variant="standard"
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 10, border: '1px solid #000', padding: 5,borderRadius:'0.3rem' }}
             value={formElement?.value}
         />
         : <Typography
-            style={{ fontSize: '24px', marginTop: 10 }}
+            style={{ fontSize: '20px', marginTop: 10 }}
             variant='h1'
             tabIndex={1}
-            onClick={()=>makeEditable()}
+            onClick={() => makeEditable()}
         >
             {formElement?.value}
         </Typography>
@@ -81,7 +80,6 @@ export const TextInput = ({ index, handleElement, handleInputValue, formElement 
     return <TextField
         fullWidth
         id="form-title"
-        label={formElement.value}
         onChange={(e) => handleInputValue(e.target.value, index)}
         placeholder='Value'
         onKeyUp={(e) => handleElement(e, 'input')}

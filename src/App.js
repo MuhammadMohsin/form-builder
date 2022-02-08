@@ -7,6 +7,7 @@ const useStyles = makeStyles({
   root: {
     display: 'flex',
     alignItems: 'center',
+    flexDirection: 'column',
     justifyContent: 'center',
     height: '100vh',
     width: '100vw',
@@ -74,8 +75,7 @@ function App() {
     return obj[value]
   }
 
-  const handleInputValue = (value, index, isString=true) => {
-    console.log(value,'===========')
+  const handleInputValue = (value, index, isString = true) => {
     let _formElement = JSON.parse(JSON.stringify(formElement))
     if (isString) {
       _formElement.formElements[index] = {
@@ -85,7 +85,7 @@ function App() {
     } else {
       _formElement.formElements[index] = {
         ..._formElement.formElements[index],
-        isEditable:true,
+        isEditable: true,
       }
     }
     setFormElement(_formElement)
@@ -95,13 +95,27 @@ function App() {
     setIsTitlePresent(false)
     textRef?.current?.focus()
   }
+
+  const exportToJSON = () => {
+    let dataType = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(formElement))}`
+    let anchorNode = document.createElement('a')
+    anchorNode.href = dataType
+    anchorNode.download = 'form.json'
+    document.body.appendChild(anchorNode)
+    anchorNode.click()
+    anchorNode.remove()
+  }
   const classes = useStyles();
   return (
     <div className={classes.root}>
+      <div>
+        <Button style={{ marginLeft: 10 }} variant='contained' onClick={exportToJSON}>Export JSON</Button>
+        <Button style={{ marginLeft: 10 }} variant='contained'>Import JSON</Button>
+      </div>
       <form className={classes.formStyle} onSubmit={(e) => e.preventDefault()}>
         {isTitlePresent ?
           <ClickAwayListener onClickAway={() => setIsTitlePresent(true)}>
-            <Typography onClick={() => autoFocus()} variant='h2' style={{ fontSize: 20 }} tabIndex='1'>{formElement.formtitle}</Typography>
+            <Typography onClick={() => autoFocus()} variant='h2' style={{ fontSize: 24 }} tabIndex='1'>{formElement.formtitle}</Typography>
           </ClickAwayListener>
           : <TextField
             fullWidth
@@ -118,7 +132,7 @@ function App() {
         {
           formElement?.formElements?.length ? formElement?.formElements?.map((element, index) => elementRender([element['name']], index)) : null
         }
-        <Button type='submit' variant='contained' style={{ marginTop: 20 }}>Submit</Button>
+        <Button variant='contained' style={{ marginTop: 20 }}>Submit</Button>
       </form>
     </div>
   );
