@@ -105,12 +105,33 @@ function App() {
     anchorNode.click()
     anchorNode.remove()
   }
+
+  const importJSON = (e) => {
+    let fileReader = new FileReader()
+    fileReader.readAsText(e.target.files[0],'UTF-8')
+    fileReader.onload = (e) => {
+      setFormElement(JSON.parse(e.target.result))
+    }
+  }
+
   const classes = useStyles();
   return (
     <div className={classes.root}>
       <div>
         <Button style={{ marginLeft: 10 }} variant='contained' onClick={exportToJSON}>Export JSON</Button>
-        <Button style={{ marginLeft: 10 }} variant='contained'>Import JSON</Button>
+        <input
+          accept="application/JSON"
+          className={classes.input}
+          onChange={(e) => importJSON(e)}
+          style={{ display: 'none' }}
+          id="jsonInput"
+          type="file"
+        />
+        <label htmlFor="jsonInput">
+          <Button style={{ marginLeft: 10 }} component='span' variant='contained'>
+            Import JSON
+          </Button>
+        </label>
       </div>
       <form className={classes.formStyle} onSubmit={(e) => e.preventDefault()}>
         {isTitlePresent ?
