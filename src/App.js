@@ -11,7 +11,6 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     height: '100vh',
     width: '100vw',
-    // backgroundColor: '#efefef'
   },
   formStyle: {
     maxHeight: 500,
@@ -37,20 +36,11 @@ function App() {
   const handleElementInsertion = (e, field = 'title') => {
     let _formElement = JSON.parse(JSON.stringify(formElement))
     if (e.keyCode === 13) { // Insert command line on enter
-      let element = {
-        name: 'CommandLine',
-        value: ''
-      }
-      _formElement = {
-        ..._formElement,
-        formElements: [..._formElement.formElements, element]
-      }
+      let element = { name: 'CommandLine', value: '' }
+      _formElement = { ..._formElement, formElements: [..._formElement.formElements, element] }
       setIsTitlePresent(true)
     } else if (field?.toLowerCase() === 'title') {
-      _formElement = {
-        ..._formElement,
-        formtitle: e.target.value,
-      }
+      _formElement = { ..._formElement, formtitle: e.target.value }
     }
     setFormElement(_formElement)
   }
@@ -63,16 +53,9 @@ function App() {
   const addCommandElement = (command, index) => {
     let _formElement = JSON.parse(JSON.stringify(formElement))
     if (command?.toLowerCase() === '/headline') {
-      _formElement.formElements[index] = {
-        name: 'Headline',
-        value: '',
-        isEditable: true // for rendering headline as editable
-      }
+      _formElement.formElements[index] = { name: 'Headline', value: '', isEditable: true } // isEditable for rendering headline as editable
     } else if (command?.toLowerCase() === '/textinput') {
-      _formElement.formElements[index] = {
-        name: 'TextInput',
-        value: ''
-      }
+      _formElement.formElements[index] = { name: 'TextInput', value: '' }
     }
     setFormElement(_formElement)
   }
@@ -102,15 +85,9 @@ function App() {
   const handleInputValue = (value, index, isString = true) => {
     let _formElement = JSON.parse(JSON.stringify(formElement))
     if (isString) {
-      _formElement.formElements[index] = {
-        ..._formElement.formElements[index],
-        value,
-      }
+      _formElement.formElements[index] = { ..._formElement.formElements[index], value }
     } else {
-      _formElement.formElements[index] = {
-        ..._formElement.formElements[index],
-        isEditable: true,
-      }
+      _formElement.formElements[index] = { ..._formElement.formElements[index], isEditable: true }
     }
     setFormElement(_formElement)
   }
@@ -136,9 +113,9 @@ function App() {
     anchorNode.remove()
   }
 
-    /**
-   * Import file to JSON
-   */
+  /**
+ * Import file to JSON
+ */
   const importJSON = (e) => {
     let fileReader = new FileReader()
     fileReader.readAsText(e.target.files[0], 'UTF-8')
@@ -161,9 +138,7 @@ function App() {
           type="file"
         />
         <label htmlFor="jsonInput">
-          <Button style={{ marginLeft: 10 }} component='span' variant='contained'>
-            Import JSON
-          </Button>
+          <Button style={{ marginLeft: 10 }} component='span' variant='contained'>Import JSON</Button>
         </label>
       </div>
       <form className={classes.formStyle} onSubmit={(e) => e.preventDefault()}>

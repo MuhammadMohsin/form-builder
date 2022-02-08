@@ -27,6 +27,8 @@ export const CommandLine = ({ addCommandElement, index }) => {
     const handleFieldCommandValue = (e) => {
         if (e.keyCode === 191) {
             setShowState(true)
+        } else if (e.keyCode === 8) {
+            setShowState(false)
         }
     }
     return <>
