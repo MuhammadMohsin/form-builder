@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Typography, Autocomplete } from '@mui/material';
+import { TextField, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles({
@@ -16,12 +16,15 @@ const useStyles = makeStyles({
 
 const options = ['/headline', '/textinput']
 
-export const CommandLine = ({ handleCommandInput, index, handleElement }) => {
+export const CommandLine = ({ addCommandElement, index }) => {
     const classes = useStyles();
     const [showState, setShowState] = useState(false)
 
-    const handleFieldCommand = (e) => {
-        console.log(e.keyCode)
+    /**
+     * show command popup on /
+     * @param {event} e 
+     */
+    const handleFieldCommandValue = (e) => {
         if (e.keyCode === 191) {
             setShowState(true)
         }
@@ -30,26 +33,39 @@ export const CommandLine = ({ handleCommandInput, index, handleElement }) => {
         <TextField
             fullWidth
             id="form-title"
-            label={'Enter /{command}'}
             placeholder='Enter /{command}'
-            onKeyUp={(e) => handleFieldCommand(e)}
+            autoComplete='off'
+            autoFocus
+            InputProps={{ disableUnderline: true }}
+            onKeyUp={(e) => handleFieldCommandValue(e)}
             variant="standard"
             style={{ marginTop: 10 }}
         />
-        {showState && <div>{options.map((value, ind) => <Typography key={ind} onClick={() => handleCommandInput(value, index)} className={classes.optionStyle}>{value}</Typography>)}</div>}
+        {showState &&
+            <div>
+                {options.map((value, ind) => <Typography key={ind} onClick={() => addCommandElement(value, index)} className={classes.optionStyle}>{value}</Typography>)}
+            </div>
+        }
     </>
 };
 
-export const Headline = ({ formElement, handleInputValue, index, handleElement }) => {
+export const Headline = ({ formElement, handleInputValue, index, handleElementInsertion }) => {
     const classes = useStyles();
 
-    const handleTextCommand = (e) => {
+    /**
+     * remove editable field on enter to display h1
+     * @param {event} e 
+     */
+    const handleTextCommandValue = (e) => {
         if (e.keyCode === 13) {
             delete formElement.isEditable
-            handleElement(e, 'input')
+            handleElementInsertion(e, 'input')
         }
     }
 
+    /**
+     * Make h1 field editable
+     */
     const makeEditable = () => {
         handleInputValue(formElement, index, false)
     }
@@ -57,32 +73,38 @@ export const Headline = ({ formElement, handleInputValue, index, handleElement }
     return formElement.isEditable ?
         <TextField
             fullWidth
-            id="form-title"
+            id="headline"
+            name="headline"
+            autoFocus
             placeholder='Place text'
+            autoComplete='off'
             onChange={(e) => handleInputValue(e.target.value, index)}
-            onKeyUp={(e) => handleTextCommand(e)}
+            onKeyUp={(e) => handleTextCommandValue(e)}
             InputProps={{ disableUnderline: true }}
             variant="standard"
-            style={{ marginTop: 10, border: '1px solid #000', padding: 5,borderRadius:'0.3rem' }}
+            style={{ marginTop: 10, padding: 5 }}
             value={formElement?.value}
         />
         : <Typography
-            style={{ fontSize: '20px', marginTop: 10 }}
             variant='h1'
             tabIndex={1}
+            style={{ fontSize: '20px', marginTop: 10 }}
             onClick={() => makeEditable()}
         >
             {formElement?.value}
         </Typography>
 };
 
-export const TextInput = ({ index, handleElement, handleInputValue, formElement }) => {
+export const TextInput = ({ index, handleElementInsertion, handleInputValue, formElement }) => {
     return <TextField
         fullWidth
-        id="form-title"
+        name="textinput"
+        id="textinput"
+        autoFocus
+        autoComplete='off'
         onChange={(e) => handleInputValue(e.target.value, index)}
-        placeholder='Value'
-        onKeyUp={(e) => handleElement(e, 'input')}
+        placeholder='Enter Value'
+        onKeyUp={(e) => handleElementInsertion(e, 'input')}
         variant="standard"
         style={{ marginBottom: 20, marginTop: 10 }}
         value={formElement.value}

@@ -22,15 +22,21 @@ const useStyles = makeStyles({
 });
 
 function App() {
-
+  // Refs
   const textRef = useRef(null);
 
-  const [formElement, setFormElement] = useState({ formtitle: '', formElements: [] })
+  // States
+  const [formElement, setFormElement] = useState({ formtitle: '', formElements: [] }) // Maintains the JSON object
   const [isTitlePresent, setIsTitlePresent] = useState(false)
 
-  const handleElement = (e, field = 'title') => {
+  /**
+   *  Add element on enter key and set title field
+   * @param {event} e 
+   * @param {string} field 
+   */
+  const handleElementInsertion = (e, field = 'title') => {
     let _formElement = JSON.parse(JSON.stringify(formElement))
-    if (e.keyCode === 13) {
+    if (e.keyCode === 13) { // Insert command line on enter
       let element = {
         name: 'CommandLine',
         value: ''
@@ -49,13 +55,18 @@ function App() {
     setFormElement(_formElement)
   }
 
-  const handleCommandInput = (command, index) => {
+  /**
+   *  Add the appropriate element based on the command
+   * @param {string} command 
+   * @param {Int} index 
+   */
+  const addCommandElement = (command, index) => {
     let _formElement = JSON.parse(JSON.stringify(formElement))
     if (command?.toLowerCase() === '/headline') {
       _formElement.formElements[index] = {
         name: 'Headline',
         value: '',
-        isEditable: true
+        isEditable: true // for rendering headline as editable
       }
     } else if (command?.toLowerCase() === '/textinput') {
       _formElement.formElements[index] = {
@@ -66,15 +77,28 @@ function App() {
     setFormElement(_formElement)
   }
 
-  const elementRender = (value, key, ...args) => {
+  /**
+   * Renders appropriate html element based on command
+   * @param {string} value 
+   * @param {Int} key 
+   * @param  {...any} args 
+   * @returns ReactElement
+   */
+  const RenderElement = (value, key, ...args) => {
     let obj = {
-      CommandLine: <CommandLine key={key} index={key} handleCommandInput={(...args) => handleCommandInput(...args)} />,
-      Headline: <Headline formElement={formElement.formElements[key]} key={key} index={key} setFormElement={setFormElement} handleElement={(...args) => handleElement(...args)} handleInputValue={(...args) => handleInputValue(...args)} />,
-      TextInput: <TextInput key={key} formElement={formElement.formElements[key]} index={key} handleElement={(...args) => handleElement(...args)} handleInputValue={(...args) => handleInputValue(...args)} />,
+      CommandLine: <CommandLine key={key} index={key} addCommandElement={(...args) => addCommandElement(...args)} />,
+      Headline: <Headline formElement={formElement.formElements[key]} key={key} index={key} setFormElement={setFormElement} handleElementInsertion={(...args) => handleElementInsertion(...args)} handleInputValue={(...args) => handleInputValue(...args)} />,
+      TextInput: <TextInput key={key} formElement={formElement.formElements[key]} index={key} handleElementInsertion={(...args) => handleElementInsertion(...args)} handleInputValue={(...args) => handleInputValue(...args)} />,
     };
     return obj[value]
   }
 
+  /**
+   * handle onchange for text input
+   * @param {string | object} value 
+   * @param {Int} index 
+   * @param {bool} isString 
+   */
   const handleInputValue = (value, index, isString = true) => {
     let _formElement = JSON.parse(JSON.stringify(formElement))
     if (isString) {
@@ -91,11 +115,17 @@ function App() {
     setFormElement(_formElement)
   }
 
+  /**
+   * autofocus to form title on click
+   */
   const autoFocus = () => {
     setIsTitlePresent(false)
     textRef?.current?.focus()
   }
 
+  /**
+   * Export file to JSON
+   */
   const exportToJSON = () => {
     let dataType = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(formElement))}`
     let anchorNode = document.createElement('a')
@@ -106,9 +136,12 @@ function App() {
     anchorNode.remove()
   }
 
+    /**
+   * Import file to JSON
+   */
   const importJSON = (e) => {
     let fileReader = new FileReader()
-    fileReader.readAsText(e.target.files[0],'UTF-8')
+    fileReader.readAsText(e.target.files[0], 'UTF-8')
     fileReader.onload = (e) => {
       setFormElement(JSON.parse(e.target.result))
     }
@@ -141,17 +174,18 @@ function App() {
           : <TextField
             fullWidth
             id="form-title"
-            label="Form title"
+            autoFocus
             variant="standard"
-            placeholder='Title'
+            placeholder='Enter Title'
+            InputProps={{ disableUnderline: true }}
             ref={textRef}
             style={{ marginBottom: 20, fontSize: 20 }}
             value={formElement.formtitle}
-            onChange={(e) => handleElement(e)}
-            onKeyUp={(e) => handleElement(e)}
+            onChange={(e) => handleElementInsertion(e)}
+            onKeyUp={(e) => handleElementInsertion(e)}
           />}
         {
-          formElement?.formElements?.length ? formElement?.formElements?.map((element, index) => elementRender([element['name']], index)) : null
+          formElement?.formElements?.length ? formElement?.formElements?.map((element, index) => RenderElement([element['name']], index)) : null
         }
         <Button variant='contained' style={{ marginTop: 20 }}>Submit</Button>
       </form>
