@@ -8,7 +8,7 @@ const useStyles = makeStyles({
         backgroundColor: '#fff',
         padding: 5,
         '&:hover': {
-            backgroundColor: '#a8a6a600',
+            backgroundColor: '#efefef',
             cursor: 'pointer'
         }
     },

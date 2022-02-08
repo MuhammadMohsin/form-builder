@@ -11,7 +11,7 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     height: '100vh',
     width: '100vw',
-    backgroundColor: '#efefef'
+    // backgroundColor: '#efefef'
   },
   formStyle: {
     maxHeight: 500,
