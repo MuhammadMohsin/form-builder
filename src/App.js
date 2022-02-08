@@ -1,4 +1,4 @@
-import React, { useState,useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { makeStyles } from '@mui/styles';
 import { Button, ClickAwayListener, TextField, Typography } from '@mui/material';
 import { CommandLine, TextInput, Headline } from './components';
@@ -53,7 +53,8 @@ function App() {
     if (command?.toLowerCase() === '/headline') {
       _formElement.formElements[index] = {
         name: 'Headline',
-        value: ''
+        value: '',
+        isEditable: true
       }
     } else if (command?.toLowerCase() === '/textinput') {
       _formElement.formElements[index] = {
@@ -67,28 +68,40 @@ function App() {
   const elementRender = (value, key, ...args) => {
     let obj = {
       CommandLine: <CommandLine key={key} index={key} handleCommandInput={(...args) => handleCommandInput(...args)} />,
-      Headline: <Headline formElement={formElement.formElements[key]} key={key} index={key} handleInputValue={(...args) => handleInputValue(...args)} />,
+      Headline: <Headline formElement={formElement.formElements[key]} key={key} index={key} setFormElement={setFormElement} handleElement={(...args) => handleElement(...args)} handleInputValue={(...args) => handleInputValue(...args)} />,
       TextInput: <TextInput key={key} formElement={formElement.formElements[key]} index={key} handleElement={(...args) => handleElement(...args)} handleInputValue={(...args) => handleInputValue(...args)} />,
     };
     return obj[value]
   }
 
-  const handleInputValue = (value, index) => {
+  const handleInputValue = (value, index, isString=true) => {
+    console.log(value,'===========')
     let _formElement = JSON.parse(JSON.stringify(formElement))
-    _formElement.formElements[index] = {
-      ..._formElement.formElements[index],
-      value: value
+    if (isString) {
+      _formElement.formElements[index] = {
+        ..._formElement.formElements[index],
+        value,
+      }
+    } else {
+      _formElement.formElements[index] = {
+        ..._formElement.formElements[index],
+        isEditable:true,
+      }
     }
     setFormElement(_formElement)
   }
 
+  const autoFocus = () => {
+    setIsTitlePresent(false)
+    textRef?.current?.focus()
+  }
   const classes = useStyles();
   return (
     <div className={classes.root}>
       <form className={classes.formStyle} onSubmit={(e) => e.preventDefault()}>
         {isTitlePresent ?
-          <ClickAwayListener onClickAway={()=>setIsTitlePresent(true)}>
-            <Typography onClick={()=>{setIsTitlePresent(false);textRef.current.focus()}} variant='h2' style={{fontSize:20}} tabIndex='1'>{formElement.formtitle}</Typography>
+          <ClickAwayListener onClickAway={() => setIsTitlePresent(true)}>
+            <Typography onClick={() => autoFocus()} variant='h2' style={{ fontSize: 20 }} tabIndex='1'>{formElement.formtitle}</Typography>
           </ClickAwayListener>
           : <TextField
             fullWidth
@@ -96,8 +109,8 @@ function App() {
             label="Form title"
             variant="standard"
             placeholder='Title'
-            inputRef={textRef}
-            style={{ marginBottom: 20,fontSize:20 }}
+            ref={textRef}
+            style={{ marginBottom: 20, fontSize: 20 }}
             value={formElement.formtitle}
             onChange={(e) => handleElement(e)}
             onKeyUp={(e) => handleElement(e)}
@@ -105,7 +118,7 @@ function App() {
         {
           formElement?.formElements?.length ? formElement?.formElements?.map((element, index) => elementRender([element['name']], index)) : null
         }
-        <Button type='submit' variant='contained'>Submit</Button>
+        <Button type='submit' variant='contained' style={{ marginTop: 20 }}>Submit</Button>
       </form>
     </div>
   );
