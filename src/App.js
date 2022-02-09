@@ -83,9 +83,8 @@ function App() {
     formRef.current.classList.remove('dragStart');
     let _formElement = JSON.parse(JSON.stringify(formElement))
     let dragIndex = e.dataTransfer.getData("index");
-    let DraggedValue = { ..._formElement.formElements[dragIndex] }
-    _formElement.formElements[dragIndex] = { ..._formElement.formElements[dropIndex] }
-    _formElement.formElements[dropIndex] = { ...DraggedValue }
+    let DraggedValue = _formElement.formElements.splice(dragIndex, 1)
+    _formElement.formElements.splice(dropIndex, 0, DraggedValue.pop())
     setFormElement(_formElement)
   }
   /**

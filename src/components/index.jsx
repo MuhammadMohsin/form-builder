@@ -63,11 +63,12 @@ export const Headline = ({ formElement, handleInputValue, index, handleElementIn
     /**
      * remove editable field on enter to display h1
      * @param {event} e 
+     * @param {string} event 
      */
-    const handleTextCommandValue = (e) => {
+    const handleTextCommandValue = (e, event = 'keyup') => {
         // Stop user to add empty heading
         if (!e.target.value) return;
-        if (e.keyCode === 13) {
+        if (e.keyCode === 13 || event === 'blur') {
             delete formElement.isEditable
             handleElementInsertion(e, 'input')
         }
@@ -91,6 +92,7 @@ export const Headline = ({ formElement, handleInputValue, index, handleElementIn
             onDrop={(e) => onDrop(e, index)}
             onDragOver={(e) => e.preventDefault()}
             placeholder='Enter text'
+            onBlur={(e) => handleTextCommandValue(e, 'blur')}
             autoComplete='off'
             onChange={(e) => handleInputValue(e.target.value, index)}
             onKeyUp={(e) => handleTextCommandValue(e)}
