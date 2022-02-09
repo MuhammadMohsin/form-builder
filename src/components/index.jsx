@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 const useStyles = makeStyles({
     optionStyle: {
@@ -12,11 +13,16 @@ const useStyles = makeStyles({
             cursor: 'pointer'
         }
     },
+    iconContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    }
 });
 
 const options = ['/headline', '/textinput']
 
-export const CommandLine = ({ addCommandElement, index }) => {
+export const CommandLine = ({ addCommandElement, index, onDragStart, onDrop }) => {
     const classes = useStyles();
     const [showState, setShowState] = useState(false)
 
@@ -37,8 +43,12 @@ export const CommandLine = ({ addCommandElement, index }) => {
             id="form-title"
             placeholder='Enter /{command}'
             autoComplete='off'
+            draggable
+            onDragStart={(e) => onDragStart(e, index)}
+            onDrop={(e) => onDrop(e, index)}
+            onDragOver={(e) => { e.preventDefault(); setShowState(false) }}
             autoFocus
-            InputProps={{ disableUnderline: true }}
+            InputProps={{ disableUnderline: true, endAdornment: <DragIndicatorIcon style={{ cursor: 'move' }} /> }}
             onKeyUp={(e) => handleFieldCommandValue(e)}
             variant="standard"
             style={{ marginTop: 10 }}
@@ -51,8 +61,9 @@ export const CommandLine = ({ addCommandElement, index }) => {
     </>
 };
 
-export const Headline = ({ formElement, handleInputValue, index, handleElementInsertion }) => {
-
+export const Headline = ({ formElement, handleInputValue, index, handleElementInsertion, onDragStart, onDrop }) => {
+    const classes = useStyles();
+    
     /**
      * remove editable field on enter to display h1
      * @param {event} e 
@@ -77,35 +88,46 @@ export const Headline = ({ formElement, handleInputValue, index, handleElementIn
             id="headline"
             name="headline"
             autoFocus
+            draggable
+            onDragStart={(e) => onDragStart(e, index)}
+            onDrop={(e) => onDrop(e, index)}
+            onDragOver={(e) => e.preventDefault()}
             placeholder='Place text'
             autoComplete='off'
             onChange={(e) => handleInputValue(e.target.value, index)}
             onKeyUp={(e) => handleTextCommandValue(e)}
             InputProps={{ disableUnderline: true }}
             variant="standard"
-            style={{ marginTop: 10, padding: 5 }}
+            style={{ marginTop: 10, padding: 5, }}
             value={formElement?.value}
         />
-        : <Typography
-            variant='h1'
-            tabIndex={1}
-            style={{ fontSize: '20px', marginTop: 10 }}
-            onClick={() => makeEditable()}
-        >
-            {formElement?.value}
-        </Typography>
+        : <div draggable className={classes.iconContainer} onDragStart={(e) => onDragStart(e, index)} onDrop={(e) => onDrop(e, index)} onDragOver={(e) => e.preventDefault()}>
+            <Typography
+                variant='h1'
+                style={{ fontSize: '18px', marginTop: 10 }}
+                onClick={() => makeEditable()}
+            >
+                {formElement?.value}
+            </Typography>
+            <DragIndicatorIcon style={{ cursor: 'move' }} />
+        </div>
 };
 
-export const TextInput = ({ index, handleElementInsertion, handleInputValue, formElement }) => {
+export const TextInput = ({ index, handleElementInsertion, handleInputValue, formElement, onDragStart, onDrop }) => {
     return <TextField
         fullWidth
         name="textinput"
         id="textinput"
+        draggable
         autoFocus
+        onDragStart={(e) => onDragStart(e, index)}
+        onDrop={(e) => onDrop(e, index)}
+        onDragOver={(e) => e.preventDefault()}
         autoComplete='off'
         onChange={(e) => handleInputValue(e.target.value, index)}
         placeholder='Enter Value'
         onKeyUp={(e) => handleElementInsertion(e, 'input')}
+        InputProps={{ endAdornment: <DragIndicatorIcon style={{ cursor: 'move' }} /> }}
         variant="standard"
         style={{ marginBottom: 20, marginTop: 10 }}
         value={formElement.value}

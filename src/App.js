@@ -61,17 +61,62 @@ function App() {
   }
 
   /**
+   * set the index of dragged element
+   * @param {event} e 
+   * @param {Int} index 
+   */
+  const onDragStart = (e, index) => { e.dataTransfer.setData("index", index) }
+
+  /**
+   * get the index of dropped element and swap the two elements
+   * @param {event} e 
+   * @param {Int} dropIndex 
+   */
+  const onDrop = (e, dropIndex) => {
+    let _formElement = JSON.parse(JSON.stringify(formElement))
+    let dragIndex = e.dataTransfer.getData("index");
+    let DraggedValue = { ..._formElement.formElements[dragIndex] }
+    _formElement.formElements[dragIndex] = { ..._formElement.formElements[dropIndex] }
+    _formElement.formElements[dropIndex] = { ...DraggedValue }
+    setFormElement(_formElement)
+  }
+  /**
    * Renders appropriate html element based on command
    * @param {string} value 
    * @param {Int} key 
-   * @param  {...any} args 
    * @returns ReactElement
    */
-  const RenderElement = (value, key, ...args) => {
+  const RenderElement = (value, key) => {
     let obj = {
-      CommandLine: <CommandLine key={key} index={key} addCommandElement={(...args) => addCommandElement(...args)} />,
-      Headline: <Headline formElement={formElement.formElements[key]} key={key} index={key} setFormElement={setFormElement} handleElementInsertion={(...args) => handleElementInsertion(...args)} handleInputValue={(...args) => handleInputValue(...args)} />,
-      TextInput: <TextInput key={key} formElement={formElement.formElements[key]} index={key} handleElementInsertion={(...args) => handleElementInsertion(...args)} handleInputValue={(...args) => handleInputValue(...args)} />,
+      CommandLine:
+        <CommandLine
+          key={key}
+          index={key}
+          addCommandElement={(...args) => addCommandElement(...args)}
+          onDragStart={(...args) => onDragStart(...args)}
+          onDrop={(...args) => onDrop(...args)}
+        />,
+      Headline:
+        <Headline
+          formElement={formElement.formElements[key]}
+          key={key}
+          index={key}
+          setFormElement={setFormElement}
+          handleElementInsertion={(...args) => handleElementInsertion(...args)}
+          handleInputValue={(...args) => handleInputValue(...args)}
+          onDragStart={(...args) => onDragStart(...args)}
+          onDrop={(...args) => onDrop(...args)}
+        />,
+      TextInput:
+        <TextInput
+          key={key}
+          formElement={formElement.formElements[key]}
+          index={key}
+          handleElementInsertion={(...args) => handleElementInsertion(...args)}
+          handleInputValue={(...args) => handleInputValue(...args)}
+          onDragStart={(...args) => onDragStart(...args)}
+          onDrop={(...args) => onDrop(...args)}
+        />,
     };
     return obj[value]
   }
@@ -157,9 +202,7 @@ function App() {
             onChange={(e) => handleElementInsertion(e)}
             onKeyUp={(e) => handleElementInsertion(e)}
           />}
-        {
-          formElement?.formElements?.length ? formElement?.formElements?.map((element, index) => RenderElement([element['name']], index)) : null
-        }
+        {formElement?.formElements?.length ? formElement?.formElements?.map((element, index) => RenderElement([element['name']], index)) : null}
         <Button variant='contained' style={{ marginTop: 20 }}>Submit</Button>
       </form>
     </div>
