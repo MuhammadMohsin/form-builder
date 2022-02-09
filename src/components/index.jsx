@@ -43,12 +43,8 @@ export const CommandLine = ({ addCommandElement, index, onDragStart, onDrop }) =
             id="form-title"
             placeholder='Enter /{command}'
             autoComplete='off'
-            draggable
-            onDragStart={(e) => onDragStart(e, index)}
-            onDrop={(e) => onDrop(e, index)}
-            onDragOver={(e) => { e.preventDefault(); setShowState(false) }}
             autoFocus
-            InputProps={{ disableUnderline: true, endAdornment: <DragIndicatorIcon style={{ cursor: 'move' }} /> }}
+            InputProps={{ disableUnderline: true }}
             onKeyUp={(e) => handleFieldCommandValue(e)}
             variant="standard"
             style={{ marginTop: 10 }}
@@ -63,12 +59,14 @@ export const CommandLine = ({ addCommandElement, index, onDragStart, onDrop }) =
 
 export const Headline = ({ formElement, handleInputValue, index, handleElementInsertion, onDragStart, onDrop }) => {
     const classes = useStyles();
-    
+
     /**
      * remove editable field on enter to display h1
      * @param {event} e 
      */
     const handleTextCommandValue = (e) => {
+        // Stop user to add empty heading
+        if (!e.target.value) return;
         if (e.keyCode === 13) {
             delete formElement.isEditable
             handleElementInsertion(e, 'input')
@@ -92,11 +90,11 @@ export const Headline = ({ formElement, handleInputValue, index, handleElementIn
             onDragStart={(e) => onDragStart(e, index)}
             onDrop={(e) => onDrop(e, index)}
             onDragOver={(e) => e.preventDefault()}
-            placeholder='Place text'
+            placeholder='Enter text'
             autoComplete='off'
             onChange={(e) => handleInputValue(e.target.value, index)}
             onKeyUp={(e) => handleTextCommandValue(e)}
-            InputProps={{ disableUnderline: true }}
+            InputProps={{ disableUnderline: true, style: { fontSize: 16, fontWeight: 700 } }}
             variant="standard"
             style={{ marginTop: 10, padding: 5, }}
             value={formElement?.value}
@@ -104,7 +102,7 @@ export const Headline = ({ formElement, handleInputValue, index, handleElementIn
         : <div draggable className={classes.iconContainer} onDragStart={(e) => onDragStart(e, index)} onDrop={(e) => onDrop(e, index)} onDragOver={(e) => e.preventDefault()}>
             <Typography
                 variant='h1'
-                style={{ fontSize: '18px', marginTop: 10 }}
+                style={{ fontSize: 16, marginTop: 10, fontWeight: 700 }}
                 onClick={() => makeEditable()}
             >
                 {formElement?.value}

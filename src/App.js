@@ -17,15 +17,19 @@ const useStyles = makeStyles({
     overflowY: 'auto',
     maxWidth: 600,
     width: '50%',
+    padding: 5,
+    '& > div': {
+      padding: 5
+    }
   }
 });
 
 function App() {
   // Refs
-  const textRef = useRef(null);
+  const formRef = useRef(null);
 
   // States
-  const [formElement, setFormElement] = useState({ formtitle: '', formElements: [] }) // Maintains the JSON object
+  const [formElement, setFormElement] = useState({ formtitle: '', formElements: [{ name: 'CommandLine', value: '' }] }) // Maintains the JSON object
   const [isTitlePresent, setIsTitlePresent] = useState(false)
 
   /**
@@ -65,7 +69,10 @@ function App() {
    * @param {event} e 
    * @param {Int} index 
    */
-  const onDragStart = (e, index) => { e.dataTransfer.setData("index", index) }
+  const onDragStart = (e, index) => {
+    formRef.current.classList.add('dragStart');
+    e.dataTransfer.setData("index", index);
+  }
 
   /**
    * get the index of dropped element and swap the two elements
@@ -73,6 +80,7 @@ function App() {
    * @param {Int} dropIndex 
    */
   const onDrop = (e, dropIndex) => {
+    formRef.current.classList.remove('dragStart');
     let _formElement = JSON.parse(JSON.stringify(formElement))
     let dragIndex = e.dataTransfer.getData("index");
     let DraggedValue = { ..._formElement.formElements[dragIndex] }
@@ -142,7 +150,6 @@ function App() {
    */
   const autoFocus = () => {
     setIsTitlePresent(false)
-    textRef?.current?.focus()
   }
 
   /**
@@ -184,23 +191,23 @@ function App() {
           <Button style={{ marginLeft: 10 }} component='span' variant='contained'>Import JSON</Button>
         </label>
       </div>
-      <form className={classes.formStyle} onSubmit={(e) => e.preventDefault()}>
+      <form className={classes.formStyle}
+        onSubmit={(e) => e.preventDefault()}
+        ref={formRef}>
         {isTitlePresent ?
           <ClickAwayListener onClickAway={() => setIsTitlePresent(true)}>
-            <Typography onClick={() => autoFocus()} variant='h2' style={{ fontSize: 24 }} tabIndex='1'>{formElement.formtitle}</Typography>
+            <Typography onClick={() => autoFocus()} variant='h2' style={{ fontSize: 24, fontWeight: 700 }} tabIndex='1'>{formElement.formtitle}</Typography>
           </ClickAwayListener>
           : <TextField
             fullWidth
             id="form-title"
             autoFocus
             variant="standard"
-            placeholder='Enter Title'
-            InputProps={{ disableUnderline: true, style: { fontSize: 24 } }}
-            ref={textRef}
+            placeholder='Enter a nice name!'
+            InputProps={{ disableUnderline: true, style: { fontSize: 24, fontWeight: 700 } }}
             style={{ marginBottom: 20, }}
             value={formElement.formtitle}
             onChange={(e) => handleElementInsertion(e)}
-            onKeyUp={(e) => handleElementInsertion(e)}
           />}
         {formElement?.formElements?.length ? formElement?.formElements?.map((element, index) => RenderElement([element['name']], index)) : null}
         <Button variant='contained' style={{ marginTop: 20 }}>Submit</Button>
